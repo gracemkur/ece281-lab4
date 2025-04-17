@@ -32,8 +32,8 @@ architecture top_basys3_arch of top_basys3 is
     signal mux_out      : std_logic_vector(3 downto 0);
     signal an_select    : std_logic_vector(3 downto 0);
     constant F_HEX      : std_logic_vector(3 downto 0) := "1111";
-
-  
+    signal fsm_reset_combined : std_logic;
+    
 	-- component declarations
     component sevenseg_decoder is
         port (
@@ -78,6 +78,7 @@ architecture top_basys3_arch of top_basys3 is
 begin
 	-- PORT MAPS ----------------------------------------
    -- ADDED THIS
+   fsm_reset_combined <= btnU or btnR;
    -- Clock Divider for 0.5s FSM step
    clk_div_inst : clock_divider
        generic map (k_DIV => 25000000)
@@ -90,7 +91,7 @@ begin
     elevator1 : elevator_controller_fsm
         port map (
             i_clk        => clk_fsm,
-            i_reset      => btnU or btnR,
+            i_reset      => fsm_reset_combined,
             is_stopped   => sw(0),
             go_up_down   => sw(1),
             o_floor      => floor1
@@ -100,7 +101,7 @@ begin
     elevator2 : elevator_controller_fsm
         port map (
             i_clk        => clk_fsm,
-            i_reset      => btnU or btnR,
+            i_reset      => fsm_reset_combined,
             is_stopped   => sw(14),
             go_up_down   => sw(15),
             o_floor      => floor2
